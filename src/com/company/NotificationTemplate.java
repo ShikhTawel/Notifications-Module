@@ -1,23 +1,22 @@
 package com.company;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.TreeSet;
+import java.io.*;
+import java.util.*;
 
 public class NotificationTemplate implements Serializable {
     private String subject;
     private String content;
-    private TreeSet<Language> availableLanguages;
+    private Language language;
+    private Channel channel;
     private ArrayList<Integer> placeholdersStartingIndexes;
     private ArrayList<Integer> placeholdersEndingIndexes;
-    private TreeSet<Channel> availableChannels;
 
-    public NotificationTemplate(String subject) {
+    public NotificationTemplate(String subject, Language language, Channel channel) {
         this.subject = subject;
-        availableLanguages = new TreeSet<>();
+        this.language = language;
+        this.channel = channel;
         placeholdersStartingIndexes = new ArrayList<>();
         placeholdersEndingIndexes = new ArrayList<>();
-        availableChannels = new TreeSet<>();
     }
 
     public boolean editContent(String content) {
@@ -32,6 +31,8 @@ public class NotificationTemplate implements Serializable {
                         placeholdersEndingIndexes.add(j);
                         i = j;
                         break;
+                    } else if (content.charAt(j) == '{') {
+                        break;
                     }
                 }
             }
@@ -45,24 +46,26 @@ public class NotificationTemplate implements Serializable {
         return true;
     }
 
-    public void addAvailableLanguage(Language language) {
-        availableLanguages.add(language);
-    }
-
-    public void addAvailableChannel(Channel channel) {
-        availableChannels.add(channel);
+    @Override
+    public String toString() {
+        return "Notification Template {" +
+                "subject='" + subject + '\'' +
+                ", content='" + content + '\'' +
+                ", Language=" + language +
+                ", placeholdersStartingIndexes=" + placeholdersStartingIndexes +
+                ", placeholdersEndingIndexes=" + placeholdersEndingIndexes +
+                ", Channel=" + channel +
+                '}';
     }
 
     @Override
-    public String toString() {
-        return "NotificationTemplate{" +
-                "subject='" + subject + '\'' +
-                ", content='" + content + '\'' +
-                ", availableLanguages=" + availableLanguages +
-                ", placeholdersStartingIndexes=" + placeholdersStartingIndexes +
-                ", placeholdersEndingIndexes=" + placeholdersEndingIndexes +
-                ", availableChannels=" + availableChannels +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NotificationTemplate template = (NotificationTemplate) o;
+
+        return subject != null ? subject.equalsIgnoreCase(template.subject) : template.subject == null;
     }
 
     public String getSubject() {
@@ -73,8 +76,12 @@ public class NotificationTemplate implements Serializable {
         return content;
     }
 
-    public TreeSet<Language> getAvailableLanguages() {
-        return availableLanguages;
+    public Language getLanguage() {
+        return language;
+    }
+
+    public Channel getChannel() {
+        return channel;
     }
 
     public ArrayList<Integer> getPlaceholdersStartingIndexes() {
@@ -83,10 +90,6 @@ public class NotificationTemplate implements Serializable {
 
     public ArrayList<Integer> getPlaceholdersEndingIndexes() {
         return placeholdersEndingIndexes;
-    }
-
-    public TreeSet<Channel> getAvailableChannels() {
-        return availableChannels;
     }
 }
 
